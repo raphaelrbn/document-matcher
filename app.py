@@ -26,7 +26,7 @@ st.markdown("""
     /* Style the main button */
     .stButton>button {
         background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%) !important;
-        color: #ffffff !important; /* Button text must stay white */
+        color: #ffffff !important;
         border-radius: 8px;
         width: 100%;
         border: none;
@@ -51,6 +51,19 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+
+# --- INSTRUCTIONS TEXT ---
+CARETRACKER_INSTRUCTIONS = """Instructions for getting the Caretracker PDF with patient names.
+
+1. Find the reports section on the left-hand side of the screen
+2. Locate the "Financial Reports" category
+3. Click on the "Other reports" line
+4. Select "Global - Charges by provider and service date"
+5. Select the right date frame 
+6. Create the report
+7. Find it in the "Published reports"
+"""
 
 
 # --- HELPER FUNCTIONS ---
@@ -85,6 +98,17 @@ with col1:
     excel_file = st.file_uploader("📊 Master Spreadsheet (Excel/CSV)", type=["xlsx", "csv"])
 with col2:
     pdf_file = st.file_uploader("📄 PDF Report", type=["pdf"])
+    
+    # Add the hidden instructions download here
+    with st.expander("ℹ️ How to get the Caretracker PDF"):
+        st.write("Download the step-by-step instructions for generating the correct PDF from Caretracker.")
+        st.download_button(
+            label="⬇️ Download Instructions",
+            data=CARETRACKER_INSTRUCTIONS,
+            file_name="Caretracker_Instructions.txt",
+            mime="text/plain",
+            use_container_width=True
+        )
 
 st.markdown("<br>", unsafe_allow_html=True) 
 
