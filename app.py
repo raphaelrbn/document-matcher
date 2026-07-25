@@ -3,20 +3,30 @@ import pandas as pd
 from pypdf import PdfReader
 import re
 
-# --- UI Configuration & Custom CSS ---
+# --- UI Configuration & Serene Blue Theme ---
 st.set_page_config(page_title="Document Matcher", page_icon="📘", layout="centered")
 
 st.markdown("""
     <style>
-    /* Main background */
+    /* Force all text to a dark slate color to prevent white-on-white in Dark Mode */
+    .stApp, .stApp p, .stApp span, .stApp label, .stApp div {
+        color: #1e293b !important;
+    }
+    
+    /* Main background - Serene Blue */
     .stApp {
-        background-color: #f8fafc;
+        background-color: #e0f0fa !important;
+    }
+    
+    /* Make headers a calming deep blue */
+    h1, h2, h3 {
+        color: #0f3d6b !important;
     }
     
     /* Style the main button */
     .stButton>button {
-        background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
-        color: white;
+        background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%) !important;
+        color: #ffffff !important; /* Button text must stay white */
         border-radius: 8px;
         width: 100%;
         border: none;
@@ -26,22 +36,18 @@ st.markdown("""
         transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background: linear-gradient(135deg, #0052a3 0%, #004080 100%);
+        background: linear-gradient(135deg, #0052a3 0%, #004080 100%) !important;
+        color: #ffffff !important;
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         transform: translateY(-1px);
     }
     
-    /* Style the upload boxes to look like cards */
+    /* Style the upload boxes to look like crisp white cards */
     [data-testid="stFileUploadDropzone"] {
-        background-color: #ffffff;
+        background-color: #ffffff !important;
         border-radius: 8px;
-        border: 2px dashed #cbd5e1;
+        border: 2px dashed #7ba0c0 !important;
         padding: 20px;
-    }
-    
-    /* Make headers dark blue for a professional look */
-    h1, h2, h3 {
-        color: #0f172a;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -70,7 +76,7 @@ EXCLUSIONS = [
 # --- MAIN APP UI ---
 # Title Area
 st.markdown("<h1 style='text-align: center;'>📘 Master Document Matcher</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; margin-bottom: 2rem;'>Securely compare your master spreadsheet against daily PDF reports.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; margin-bottom: 2rem;'>Securely compare your master spreadsheet against daily PDF reports.</p>", unsafe_allow_html=True)
 
 # Upload Area
 st.markdown("### Step 1: Upload Documents")
@@ -80,7 +86,7 @@ with col1:
 with col2:
     pdf_file = st.file_uploader("📄 PDF Report", type=["pdf"])
 
-st.markdown("<br>", unsafe_allow_html=True) # Add some breathing room
+st.markdown("<br>", unsafe_allow_html=True) 
 
 # Processing Area
 if excel_file and pdf_file:
@@ -162,13 +168,11 @@ if excel_file and pdf_file:
                 # --- DISPLAY DASHBOARD RESULTS ---
                 st.markdown("### Step 2: Results")
                 
-                # Use Streamlit Metrics for a clean dashboard look
                 met1, met2, met3 = st.columns(3)
                 met1.metric(label="Total in Spreadsheet", value=len(spreadsheet_persons))
                 met2.metric(label="✅ Found in PDF", value=len(in_both))
                 met3.metric(label="⚠️ Missing from PDF", value=len(only_in_spreadsheet))
                 
-                # Tuck the raw text inside an expander so it doesn't crowd the screen
                 with st.expander("Preview Full Text Report"):
                     st.text_area("", report_text, height=300, label_visibility="collapsed")
                 
