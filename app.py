@@ -3,51 +3,76 @@ import pandas as pd
 from pypdf import PdfReader
 import re
 
-# --- UI Configuration & Serene Blue Theme ---
+# --- UI Configuration & Forced White Theme ---
 st.set_page_config(page_title="Document Matcher", page_icon="📘", layout="centered")
 
 st.markdown("""
     <style>
-    /* Force all text to a dark slate color to prevent white-on-white in Dark Mode */
-    .stApp, .stApp p, .stApp span, .stApp label, .stApp div {
-        color: #1e293b !important;
+    /* 1. Force Pure White Background Everywhere */
+    .stApp, .main, [data-testid="stHeader"] {
+        background-color: #ffffff !important;
     }
     
-    /* Main background - Serene Blue */
-    .stApp {
-        background-color: #e0f0fa !important;
+    /* 2. Force Dark Text Everywhere (Ignores Dark Mode) */
+    html, body, [class*="css"], .stApp, .stApp p, .stApp span, .stApp label, .stApp div, h1, h2, h3, h4, h5, h6, li {
+        color: #111111 !important;
     }
     
-    /* Make headers a calming deep blue */
-    h1, h2, h3 {
-        color: #0f3d6b !important;
-    }
-    
-    /* Style the main button */
-    .stButton>button {
+    /* 3. Style the Main Blue Buttons (Keep text white here) */
+    .stButton>button, .stDownloadButton>button {
         background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%) !important;
         color: #ffffff !important;
-        border-radius: 8px;
-        width: 100%;
-        border: none;
-        padding: 10px;
-        font-weight: 600;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+        border-radius: 8px !important;
+        width: 100% !important;
+        border: none !important;
+        padding: 10px !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
     }
-    .stButton>button:hover {
-        background: linear-gradient(135deg, #0052a3 0%, #004080 100%) !important;
-        color: #ffffff !important;
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-        transform: translateY(-1px);
+    .stButton>button *, .stDownloadButton>button * {
+        color: #ffffff !important; /* Ensures emojis/text inside buttons stay white */
     }
     
-    /* Style the upload boxes to look like crisp white cards */
+    /* 4. File Uploader Drop Zones */
     [data-testid="stFileUploadDropzone"] {
+        background-color: #f8f9fa !important;
+        border-radius: 8px !important;
+        border: 2px dashed #94a3b8 !important;
+        padding: 20px !important;
+    }
+    [data-testid="stFileUploadDropzone"] * {
+        color: #334155 !important;
+    }
+    
+    /* 5. Expanders (Dropdowns) */
+    [data-testid="stExpander"] {
+        background-color: #f1f5f9 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+    }
+    [data-testid="stExpander"] * {
+        color: #0f172a !important;
+    }
+    
+    /* 6. Text Area (The Report Preview Box) */
+    .stTextArea textarea {
         background-color: #ffffff !important;
-        border-radius: 8px;
-        border: 2px dashed #7ba0c0 !important;
-        padding: 20px;
+        color: #111111 !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+    
+    /* 7. Metrics (The big numbers) */
+    [data-testid="stMetricValue"] div, [data-testid="stMetricLabel"] div {
+        color: #111111 !important;
+    }
+    
+    /* 8. Loading/Status Box */
+    [data-testid="stStatusWidget"] {
+        background-color: #f8f9fa !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+    [data-testid="stStatusWidget"] * {
+        color: #111111 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -99,7 +124,7 @@ with col1:
 with col2:
     pdf_file = st.file_uploader("📄 PDF Report", type=["pdf"])
     
-    # Add the hidden instructions download here
+    # Hidden instructions download
     with st.expander("ℹ️ How to get the Caretracker PDF"):
         st.write("Download the step-by-step instructions for generating the correct PDF from Caretracker.")
         st.download_button(
