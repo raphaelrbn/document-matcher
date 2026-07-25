@@ -3,26 +3,45 @@ import pandas as pd
 from pypdf import PdfReader
 import re
 
-# --- UI Configuration & Blue Theme ---
+# --- UI Configuration & Custom CSS ---
 st.set_page_config(page_title="Document Matcher", page_icon="📘", layout="centered")
 
 st.markdown("""
     <style>
-    /* Make the main button blue */
+    /* Main background */
+    .stApp {
+        background-color: #f8fafc;
+    }
+    
+    /* Style the main button */
     .stButton>button {
-        background-color: #0066cc;
+        background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
         color: white;
-        border-radius: 5px;
+        border-radius: 8px;
         width: 100%;
         border: none;
+        padding: 10px;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background-color: #004c99;
-        color: white;
+        background: linear-gradient(135deg, #0052a3 0%, #004080 100%);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
     }
-    /* Add a subtle blue tint to the background */
-    .stApp {
-        background-color: #f4f8fc;
+    
+    /* Style the upload boxes to look like cards */
+    [data-testid="stFileUploadDropzone"] {
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 2px dashed #cbd5e1;
+        padding: 20px;
+    }
+    
+    /* Make headers dark blue for a professional look */
+    h1, h2, h3 {
+        color: #0f172a;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -49,20 +68,27 @@ EXCLUSIONS = [
 ]
 
 # --- MAIN APP UI ---
-st.title("📘 Document Matcher")
-st.write("Drag and drop your Master Spreadsheet and the PDF report below to generate a comparison.")
+# Title Area
+st.markdown("<h1 style='text-align: center;'>📘 Master Document Matcher</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #64748b; margin-bottom: 2rem;'>Securely compare your master spreadsheet against daily PDF reports.</p>", unsafe_allow_html=True)
 
+# Upload Area
+st.markdown("### Step 1: Upload Documents")
 col1, col2 = st.columns(2)
 with col1:
-    excel_file = st.file_uploader("1. Master Spreadsheet", type=["xlsx", "csv"])
+    excel_file = st.file_uploader("📊 Master Spreadsheet (Excel/CSV)", type=["xlsx", "csv"])
 with col2:
-    pdf_file = st.file_uploader("2. PDF Document", type=["pdf"])
+    pdf_file = st.file_uploader("📄 PDF Report", type=["pdf"])
 
+st.markdown("<br>", unsafe_allow_html=True) # Add some breathing room
+
+# Processing Area
 if excel_file and pdf_file:
-    if st.button("Run Comparison"):
-        with st.spinner("Processing documents..."):
+    if st.button("🚀 Run Comparison Match", use_container_width=True):
+        with st.status("Analyzing documents...", expanded=True) as status:
             try:
-                # --- STEP 1: Process Spreadsheet ---
+                st.write("Reading spreadsheet data...")
+                # --- PROCESS SPREADSHEET ---
                 if excel_file.name.endswith('.csv'):
                     df = pd.read_csv(excel_file)
                 else:
@@ -73,6 +99,7 @@ if excel_file and pdf_file:
                 ln_col = next((col for col in df.columns if col in ['last name', 'lastname', 'last_name', 'last']), None)
 
                 if not (fn_col and ln_col):
+                    status.update(label="Error processing spreadsheet", state="error", expanded=True)
                     st.error("Could not find 'First Name' and 'Last Name' columns.")
                     st.stop()
                     
@@ -93,7 +120,8 @@ if excel_file and pdf_file:
                     if core_f and core_l:
                         spreadsheet_persons[display_name] = {'core_first': core_f, 'core_last': core_l}
 
-                # --- STEP 2: Process PDF ---
+                st.write("Scanning PDF text for matches...")
+                # --- PROCESS PDF ---
                 reader = PdfReader(pdf_file)
                 pdf_text = "".join(page.extract_text() or "" for page in reader.pages)
                 pdf_text_flat = re.sub(r'\s+', ' ', pdf_text).lower()
@@ -115,7 +143,7 @@ if excel_file and pdf_file:
                 in_both.sort()
                 only_in_spreadsheet.sort()
 
-                # --- STEP 3: Generate Report ---
+                # --- GENERATE REPORT ---
                 report_lines = [
                     "=" * 50, "COMPARISON RESULTS REPORT (FUZZY MATCHING)", "=" * 50 + "\n",
                     f"1. IN BOTH FILES ({len(in_both)} found):", "-" * 30
@@ -129,18 +157,29 @@ if excel_file and pdf_file:
                 
                 report_text = "\n".join(report_lines)
                 
-                st.success("Comparison complete!")
+                status.update(label="Comparison Complete!", state="complete", expanded=False)
                 
-                # Show a preview on screen
-                st.text_area("Report Preview", report_text, height=300)
+                # --- DISPLAY DASHBOARD RESULTS ---
+                st.markdown("### Step 2: Results")
                 
-                # Create a download button for the text file
+                # Use Streamlit Metrics for a clean dashboard look
+                met1, met2, met3 = st.columns(3)
+                met1.metric(label="Total in Spreadsheet", value=len(spreadsheet_persons))
+                met2.metric(label="✅ Found in PDF", value=len(in_both))
+                met3.metric(label="⚠️ Missing from PDF", value=len(only_in_spreadsheet))
+                
+                # Tuck the raw text inside an expander so it doesn't crowd the screen
+                with st.expander("Preview Full Text Report"):
+                    st.text_area("", report_text, height=300, label_visibility="collapsed")
+                
                 st.download_button(
                     label="⬇️ Download Results as Text File",
                     data=report_text,
                     file_name="comparison_results.txt",
-                    mime="text/plain"
+                    mime="text/plain",
+                    use_container_width=True
                 )
 
             except Exception as e:
-                st.error(f"An error occurred: {e}")
+                status.update(label="An error occurred", state="error", expanded=True)
+                st.error(f"Error details: {e}")
