@@ -3,78 +3,70 @@ import pandas as pd
 from pypdf import PdfReader
 import re
 
-# --- UI Configuration & Pastel Theme ---
+# --- UI Configuration & True Blue Theme ---
 st.set_page_config(page_title="Document Matcher", page_icon="📘", layout="centered")
 
 st.markdown("""
     <style>
-    /* 1. Override Streamlit's hidden root variables to completely disable Dark Mode clashes */
+    /* 1. Override Streamlit's hidden variables */
     :root {
-        --text-color: #2c3e50 !important;
-        --background-color: #eaf2f8 !important;
-        --secondary-background-color: #ffffff !important;
+        --text-color: #1e293b !important;
     }
 
-    /* 2. Force Pastel Blue Background */
+    /* 2. Force an UNDENIABLE Blue Background (No more washing out to white) */
     .stApp, .main, [data-testid="stHeader"] {
-        background-color: #eaf2f8 !important; 
+        background-color: #93C5FD !important; /* Distinct Pastel / Sky Blue */
     }
     
-    /* 3. Force Dark Slate Text Everywhere (Highly visible, softer than pure black) */
-    html, body, [class*="css"], .stApp, .stApp *, h1, h2, h3, h4, h5, h6, p, span, div, label, li {
-        color: #2c3e50 !important;
+    /* 3. Main App Text Color (Dark slate for high readability on the blue background) */
+    html, body, p, span, div, label, li, h1, h2, h3, h4, h5, h6 {
+        color: #1e293b !important;
     }
     
-    /* 4. Pastel Blue Buttons */
+    /* 4. File Uploader Drop Zones (Deep Blue background so white text pops) */
+    [data-testid="stFileUploadDropzone"] {
+        background-color: #1E3A8A !important; /* Deep Navy Blue */
+        border-radius: 12px !important;
+        border: 2px dashed #BFDBFE !important; /* Light blue dashed border */
+        padding: 20px !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+    }
+    
+    /* 5. Force ALL text & icons inside the dropzone (including the 200MB limit) to be PURE WHITE */
+    [data-testid="stFileUploadDropzone"] *, 
+    [data-testid="stFileUploadDropzone"] small {
+        color: #ffffff !important;
+        fill: #ffffff !important; /* Makes the cloud upload icon white too */
+    }
+    
+    /* 6. Main Action Buttons */
     .stButton>button, .stDownloadButton>button {
-        background-color: #cce3f3 !important;
-        color: #2c3e50 !important; /* Dark text on pastel button */
+        background-color: #2563EB !important; /* Strong Royal Blue */
+        color: #ffffff !important; /* White text */
         border-radius: 8px !important;
         width: 100% !important;
-        border: 2px solid #a4c9e3 !important;
+        border: none !important;
         padding: 10px !important;
         font-weight: 600 !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
         transition: all 0.2s ease;
     }
     .stButton>button:hover, .stDownloadButton>button:hover {
-        background-color: #b5d5ec !important;
+        background-color: #1D4ED8 !important; /* Slightly darker on hover */
         transform: translateY(-1px);
     }
-    /* Ensure emojis inside buttons stay visible */
     .stButton>button *, .stDownloadButton>button * {
-        color: #2c3e50 !important; 
+        color: #ffffff !important; /* Keeps emojis visible */
     }
     
-    /* 5. File Uploader Drop Zones (Crisp white cards, pastel borders) */
-    [data-testid="stFileUploadDropzone"] {
+    /* 7. White Cards for Expanders, Reports, and Status to keep things clean */
+    [data-testid="stExpander"], .stTextArea textarea, [data-testid="stStatusWidget"] {
         background-color: #ffffff !important;
-        border-radius: 12px !important;
-        border: 2px dashed #a4c9e3 !important;
-        padding: 20px !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
-    }
-    
-    /* 6. Expanders (Dropdowns) */
-    [data-testid="stExpander"] {
-        background-color: #ffffff !important;
-        border: 1px solid #a4c9e3 !important;
+        border: 1px solid #60A5FA !important;
         border-radius: 8px !important;
     }
-    
-    /* 7. Text Area (The Report Preview Box) */
-    .stTextArea textarea {
-        background-color: #ffffff !important;
-        color: #2c3e50 !important;
-        border: 1px solid #a4c9e3 !important;
-        border-radius: 8px !important;
-    }
-    
-    /* 8. Loading/Status Box */
-    [data-testid="stStatusWidget"] {
-        background-color: #ffffff !important;
-        border: 1px solid #a4c9e3 !important;
-        border-radius: 8px !important;
+    [data-testid="stExpander"] *, .stTextArea textarea, [data-testid="stStatusWidget"] * {
+        color: #1e293b !important; /* Dark text inside the white cards */
     }
     </style>
 """, unsafe_allow_html=True)
