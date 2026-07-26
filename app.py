@@ -115,7 +115,7 @@ st.markdown("<p style='text-align: center; font-size: 0.9em; margin-bottom: 2rem
 st.markdown("### Step 1: Upload Documents")
 col1, col2 = st.columns(2)
 with col1:
-    excel_file = st.file_uploader("📊 Master Spreadsheet (Excel/CSV) (hospital LOG with patient names)", type=["xlsx", "csv"])
+    excel_file = st.file_uploader("📊 Master Spreadsheet (Excel/CSV) (hospital LOG)", type=["xlsx", "csv"])
 with col2:
     pdf_file = st.file_uploader("📄 PDF Report (from Caretracker)", type=["pdf"])
     
