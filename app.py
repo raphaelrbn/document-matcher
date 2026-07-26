@@ -108,7 +108,8 @@ EXCLUSIONS = [
 # --- MAIN APP UI ---
 # Title Area
 st.markdown("<h1 style='text-align: center;'>📘 Master Document Matcher</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; margin-bottom: 2rem;'>Securely compare your master spreadsheet against daily PDF reports.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; margin-bottom: 0.5rem;'>Securely compare your master spreadsheet against daily PDF reports.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 0.9em; margin-bottom: 2rem;'><em>(Note: Legibility depends on your browser's theme)</em></p>", unsafe_allow_html=True)
 
 # Upload Area
 st.markdown("### Step 1: Upload Documents")
