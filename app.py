@@ -13,7 +13,7 @@ st.markdown("""
         --text-color: #1e293b !important;
     }
 
-    /* 2. Force an UNDENIABLE Blue Background (No more washing out to white) */
+    /* 2. Force an UNDENIABLE Blue Background */
     .stApp, .main, [data-testid="stHeader"] {
         background-color: #93C5FD !important; /* Distinct Pastel / Sky Blue */
     }
@@ -23,11 +23,11 @@ st.markdown("""
         color: #1e293b !important;
     }
     
-    /* 4. File Uploader Drop Zones (Vibrant Yellow background) */
+    /* 4. File Uploader Drop Zones (Pastel Yellow background) */
     [data-testid="stFileUploadDropzone"] {
-        background-color: #FBBF24 !important; /* Bright, rich yellow */
+        background-color: #FDFD96 !important; /* Soft Pastel Yellow */
         border-radius: 12px !important;
-        border: 2px dashed #B45309 !important; /* Darker golden dashed border */
+        border: 2px dashed #1E3A8A !important; /* Dark Navy border to match text */
         padding: 20px !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
     }
@@ -35,8 +35,8 @@ st.markdown("""
     /* 5. Force ALL text & icons inside the dropzone to be Dark Navy Blue */
     [data-testid="stFileUploadDropzone"] *, 
     [data-testid="stFileUploadDropzone"] small {
-        color: #1E3A8A !important; /* Deep blue text so it is readable on yellow */
-        fill: #1E3A8A !important; /* Makes the cloud upload icon dark too */
+        color: #1E3A8A !important; /* Deep navy text so it is highly readable on pastel yellow */
+        fill: #1E3A8A !important; /* Makes the cloud upload icon dark navy too */
     }
     
     /* 6. Main Action Buttons */
