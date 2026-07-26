@@ -23,20 +23,20 @@ st.markdown("""
         color: #1e293b !important;
     }
     
-    /* 4. File Uploader Drop Zones (Deep Blue background so white text pops) */
+    /* 4. File Uploader Drop Zones (Vibrant Yellow background) */
     [data-testid="stFileUploadDropzone"] {
-        background-color: #1E3A8A !important; /* Deep Navy Blue */
+        background-color: #FBBF24 !important; /* Bright, rich yellow */
         border-radius: 12px !important;
-        border: 2px dashed #BFDBFE !important; /* Light blue dashed border */
+        border: 2px dashed #B45309 !important; /* Darker golden dashed border */
         padding: 20px !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
     }
     
-    /* 5. Force ALL text & icons inside the dropzone (including the 200MB limit) to be PURE WHITE */
+    /* 5. Force ALL text & icons inside the dropzone to be Dark Navy Blue */
     [data-testid="stFileUploadDropzone"] *, 
     [data-testid="stFileUploadDropzone"] small {
-        color: #ffffff !important;
-        fill: #ffffff !important; /* Makes the cloud upload icon white too */
+        color: #1E3A8A !important; /* Deep blue text so it is readable on yellow */
+        fill: #1E3A8A !important; /* Makes the cloud upload icon dark too */
     }
     
     /* 6. Main Action Buttons */
