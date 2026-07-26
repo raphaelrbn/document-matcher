@@ -3,76 +3,78 @@ import pandas as pd
 from pypdf import PdfReader
 import re
 
-# --- UI Configuration & Forced White Theme ---
+# --- UI Configuration & Pastel Theme ---
 st.set_page_config(page_title="Document Matcher", page_icon="📘", layout="centered")
 
 st.markdown("""
     <style>
-    /* 1. Force Pure White Background Everywhere */
+    /* 1. Override Streamlit's hidden root variables to completely disable Dark Mode clashes */
+    :root {
+        --text-color: #2c3e50 !important;
+        --background-color: #eaf2f8 !important;
+        --secondary-background-color: #ffffff !important;
+    }
+
+    /* 2. Force Pastel Blue Background */
     .stApp, .main, [data-testid="stHeader"] {
-        background-color: #ffffff !important;
+        background-color: #eaf2f8 !important; 
     }
     
-    /* 2. Force Dark Text Everywhere (Ignores Dark Mode) */
-    html, body, [class*="css"], .stApp, .stApp p, .stApp span, .stApp label, .stApp div, h1, h2, h3, h4, h5, h6, li {
-        color: #111111 !important;
+    /* 3. Force Dark Slate Text Everywhere (Highly visible, softer than pure black) */
+    html, body, [class*="css"], .stApp, .stApp *, h1, h2, h3, h4, h5, h6, p, span, div, label, li {
+        color: #2c3e50 !important;
     }
     
-    /* 3. Style the Main Blue Buttons (Keep text white here) */
+    /* 4. Pastel Blue Buttons */
     .stButton>button, .stDownloadButton>button {
-        background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%) !important;
-        color: #ffffff !important;
+        background-color: #cce3f3 !important;
+        color: #2c3e50 !important; /* Dark text on pastel button */
         border-radius: 8px !important;
         width: 100% !important;
-        border: none !important;
+        border: 2px solid #a4c9e3 !important;
         padding: 10px !important;
         font-weight: 600 !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.2s ease;
     }
+    .stButton>button:hover, .stDownloadButton>button:hover {
+        background-color: #b5d5ec !important;
+        transform: translateY(-1px);
+    }
+    /* Ensure emojis inside buttons stay visible */
     .stButton>button *, .stDownloadButton>button * {
-        color: #ffffff !important; /* Ensures emojis/text inside buttons stay white */
+        color: #2c3e50 !important; 
     }
     
-    /* 4. File Uploader Drop Zones */
+    /* 5. File Uploader Drop Zones (Crisp white cards, pastel borders) */
     [data-testid="stFileUploadDropzone"] {
-        background-color: #f8f9fa !important;
-        border-radius: 8px !important;
-        border: 2px dashed #94a3b8 !important;
+        background-color: #ffffff !important;
+        border-radius: 12px !important;
+        border: 2px dashed #a4c9e3 !important;
         padding: 20px !important;
-    }
-    [data-testid="stFileUploadDropzone"] * {
-        color: #334155 !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
     }
     
-    /* 5. Expanders (Dropdowns) */
+    /* 6. Expanders (Dropdowns) */
     [data-testid="stExpander"] {
-        background-color: #f1f5f9 !important;
-        border: 1px solid #cbd5e1 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #a4c9e3 !important;
         border-radius: 8px !important;
     }
-    [data-testid="stExpander"] * {
-        color: #0f172a !important;
-    }
     
-    /* 6. Text Area (The Report Preview Box) */
+    /* 7. Text Area (The Report Preview Box) */
     .stTextArea textarea {
         background-color: #ffffff !important;
-        color: #111111 !important;
-        border: 1px solid #cbd5e1 !important;
-    }
-    
-    /* 7. Metrics (The big numbers) */
-    [data-testid="stMetricValue"] div, [data-testid="stMetricLabel"] div {
-        color: #111111 !important;
+        color: #2c3e50 !important;
+        border: 1px solid #a4c9e3 !important;
+        border-radius: 8px !important;
     }
     
     /* 8. Loading/Status Box */
     [data-testid="stStatusWidget"] {
-        background-color: #f8f9fa !important;
-        border: 1px solid #cbd5e1 !important;
-    }
-    [data-testid="stStatusWidget"] * {
-        color: #111111 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #a4c9e3 !important;
+        border-radius: 8px !important;
     }
     </style>
 """, unsafe_allow_html=True)
